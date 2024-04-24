@@ -8,7 +8,7 @@ import (
 	"regexp"
 	"video_tool/tools/helper"
 
-	"fyne.io/fyne/widget"
+	"fyne.io/fyne/v2/widget"
 	"github.com/therecipe/qt/widgets"
 )
 

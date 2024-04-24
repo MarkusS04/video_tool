@@ -4,7 +4,7 @@ import (
 	"video_tool/tools/helper"
 	"video_tool/ui"
 
-	"fyne.io/fyne/app"
+	"fyne.io/fyne/v2/app"
 )
 
 func main() {

@@ -4,9 +4,10 @@ import (
 	"errors"
 	"strconv"
 
-	"fyne.io/fyne"
-	"fyne.io/fyne/container"
-	"fyne.io/fyne/widget"
+	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/layout"
+	"fyne.io/fyne/v2/widget"
 )
 
 func addInputField(data *[]*widget.Entry, parent *fyne.Container, numbersOnly bool) {
@@ -45,9 +46,15 @@ func addInputField(data *[]*widget.Entry, parent *fyne.Container, numbersOnly bo
 		parent.Remove(con)
 	})
 
-	con = container.NewHBox(inputField, removeButton)
+	con = container.New(layout.NewFormLayout(), removeButton, inputField)
 	(*data)[len(*data)-1] = inputField
 
 	con.Refresh()
 	parent.Add(con)
+}
+
+func backToMainMenu(window fyne.Window) *widget.Button {
+	return widget.NewButton("Back to Main Menu", func() {
+		mainMenu(window)
+	})
 }

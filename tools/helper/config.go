@@ -15,6 +15,7 @@ type config struct {
 	FS struct {
 		Source      string
 		Destination string
+		Autoremove  bool
 	}
 }
 
@@ -36,4 +37,13 @@ func GetConfig() {
 	conf.FS.Destination = os.ExpandEnv(conf.FS.Destination)
 
 	Config = conf
+}
+
+func StoreConfig() {
+	viper.Set("fs.source", Config.FS.Source)
+	viper.Set("fs.destination", Config.FS.Destination)
+	viper.Set("fs.autoremove", Config.FS.Autoremove)
+	if err := viper.WriteConfig(); err != nil {
+		panic(fmt.Errorf("fatal error config file: %s", err))
+	}
 }

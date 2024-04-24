@@ -1,23 +1,31 @@
 package ui
 
 import (
-	"fyne.io/fyne"
-	"fyne.io/fyne/container"
-	"fyne.io/fyne/dialog"
-	"fyne.io/fyne/theme"
-	"fyne.io/fyne/widget"
+	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/dialog"
+	"fyne.io/fyne/v2/theme"
+	"fyne.io/fyne/v2/widget"
 )
 
 func MainMenu(app fyne.App) {
-
 	window := app.NewWindow("Medien Downloader")
+	mainMenu(window)
+	window.ShowAndRun()
+}
+
+func mainMenu(window fyne.Window) {
+
 	layout := container.NewGridWithColumns(2,
 		widget.NewButton("Manuell", func() {}),
 		widget.NewButton("Automatisch", func() {
 			window.Hide()
-			AutomaticDownloadMenu(window)
+			automaticDownloadMenu(window)
 		}),
-		widget.NewButton("Config bearbeiten", func() {}),
+		widget.NewButton("Config bearbeiten", func() {
+			window.Hide()
+			configEditView(window)
+		}),
 		widget.NewButton("Medien Ordner leeren", func() {}),
 	)
 
@@ -31,7 +39,7 @@ func MainMenu(app fyne.App) {
 	))
 
 	window.Resize(fyne.NewSize(640, 400))
-	window.ShowAndRun()
+	window.Show()
 }
 
 func showInfoDialog(window fyne.Window) {
@@ -39,9 +47,9 @@ func showInfoDialog(window fyne.Window) {
 		"Der automatische Modus lädt alle Videos für die heutige Zusammenkunft und es können weitere Videos angegeben werden.\n" +
 		"Im manuellen Modus müssen sämtliche Videos angegeben werden, die heruntergeladen werden sollen.\n" +
 		"In der Config können bestimmte Funktionen bearbeitet werden.\n" +
-		"Mittels Medien Ordner leeren, werden alle Lieder und Videos entfernt die heruntergeladen wurden."
+		"Mittels Medien Ordner leeren, werden alle Medien entfernt die heruntergeladen wurden. Wenn autoremove aktiviert ist passiert dies bei jedem Download automatisch"
 
-	infoLabel := widget.NewLabel(infoText)
+	infoLabel := widget.NewLabelWithStyle(infoText, fyne.TextAlignLeading, fyne.TextStyle{})
 	infoLabel.Wrapping = fyne.TextWrapWord
 
 	dialog.ShowCustom("Herzlich Willkommen im Medien Downloader", "OK", infoLabel, window)

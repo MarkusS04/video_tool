@@ -1,9 +1,10 @@
 # config.yaml
 
 jw:
-  apiUrl: "https://b.jw-cdn.org/apis/mediator/v1/media-items/X/%s?clientType=www"
-  all: "https://b.jw-cdn.org/apis/mediator/v1/categories/X/VODMinistryMidweekMeeting?detailed=1&clientType=www"
+    apiurl: https://b.jw-cdn.org/apis/mediator/v1/media-items/X/%s?clientType=www
+    all: https://b.jw-cdn.org/apis/mediator/v1/categories/X/VODMinistryMidweekMeeting?detailed=1&clientType=www
 
 fs:
-  source: "$HOME/Desktop/Lieder"
-  destination: "$HOME/Desktop/Heute"
+    source: $HOME/Desktop/Lieder
+    destination: $HOME/Desktop/Heute
+    autoremove: true

@@ -3,13 +3,15 @@ package ui
 
 import (
 	"sync"
+	"time"
+	"video_tool/tools/helper"
 	"video_tool/tools/song"
 	"video_tool/tools/video"
 
-	"fyne.io/fyne"
-	"fyne.io/fyne/container"
-	"fyne.io/fyne/layout"
-	"fyne.io/fyne/widget"
+	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/layout"
+	"fyne.io/fyne/v2/widget"
 )
 
 type downloadData struct {
@@ -18,8 +20,8 @@ type downloadData struct {
 	VideosAuto    []video.File
 }
 
-// AutomaticDownloadMenu erstellt die GUI für den Automatischen Download
-func AutomaticDownloadMenu(window fyne.Window) {
+// automaticDownloadMenu erstellt die GUI für den Automatischen Download
+func automaticDownloadMenu(window fyne.Window) {
 
 	download := downloadData{Songs: &[]*widget.Entry{}, VideosManuell: &[]*widget.Entry{}}
 
@@ -28,52 +30,18 @@ func AutomaticDownloadMenu(window fyne.Window) {
 	window.CenterOnScreen()
 
 	downloadBox := container.NewVBox()
-	downloadBox.Add(widget.NewButton("Start Download", func() {
-		var wg sync.WaitGroup
-		wg.Add(3)
 
-		progressBarSong := widget.NewProgressBar()
-		progressBarManuell := widget.NewProgressBar()
-		progressBarAuto := widget.NewProgressBar()
-		downloadBox.Add(progressBarSong)
-		downloadBox.Add(progressBarManuell)
-		downloadBox.Add(progressBarAuto)
+	var downloadBtn *widget.Button
+	downloadBtn = widget.NewButton("Start Download", func() {
+		execDownload(downloadBtn, downloadBox, &download)
+		time.Sleep(2 * time.Second)
+		mainMenu(window)
+	})
+	downloadBox.Add(downloadBtn)
 
-		func(wg *sync.WaitGroup) {
-			defer wg.Done()
-			var songs []string
-			for _, song := range *download.Songs {
-				songs = append(songs, song.Text)
-			}
-
-			song.Copy(songs, progressBarSong)
-			progressBarSong.SetValue(100)
-		}(&wg)
-
-		func(wg *sync.WaitGroup) {
-			defer wg.Done()
-			var videosManuell []string
-			for _, video := range *download.VideosManuell {
-				videosManuell = append(videosManuell, (*video).Text)
-			}
-
-			progressBarManuell.SetValue(0)
-			video.DownloadManuell(videosManuell, progressBarManuell)
-			progressBarManuell.SetValue(100)
-		}(&wg)
-
-		func(wg *sync.WaitGroup) {
-			defer wg.Done()
-			progressBarAuto.SetValue(0)
-			video.ExecDownload(download.VideosAuto, "A_", progressBarAuto)
-			progressBarSong.SetValue(100)
-		}(&wg)
-
-		wg.Wait()
-
-	}))
-
-	vbox := widget.NewVBox(
+	vbox := container.New(
+		layout.NewVBoxLayout(),
+		backToMainMenu(window),
 		container.NewAdaptiveGrid(2,
 			songsMenu(&download),
 			videoMenu(&download),
@@ -85,4 +53,54 @@ func AutomaticDownloadMenu(window fyne.Window) {
 
 	window.SetContent(vbox)
 	window.Show()
+}
+
+func execDownload(btn *widget.Button, downloadBox *fyne.Container, download *downloadData) {
+	btn.Disable()
+
+	var wg sync.WaitGroup
+	wg.Add(3)
+
+	progressBarSong := widget.NewProgressBar()
+	progressBarManuell := widget.NewProgressBar()
+	progressBarAuto := widget.NewProgressBar()
+	downloadBox.Add(progressBarSong)
+	downloadBox.Add(progressBarManuell)
+	downloadBox.Add(progressBarAuto)
+
+	if helper.Config.FS.Autoremove {
+		helper.Cleanup()
+	}
+
+	func(wg *sync.WaitGroup) {
+		defer wg.Done()
+		var songs []string
+		for _, song := range *download.Songs {
+			songs = append(songs, song.Text)
+		}
+
+		song.Copy(songs, progressBarSong)
+		progressBarSong.SetValue(100)
+	}(&wg)
+
+	func(wg *sync.WaitGroup) {
+		defer wg.Done()
+		var videosManuell []string
+		for _, video := range *download.VideosManuell {
+			videosManuell = append(videosManuell, (*video).Text)
+		}
+
+		progressBarManuell.SetValue(0)
+		video.DownloadManuell(videosManuell, progressBarManuell)
+		progressBarManuell.SetValue(100)
+	}(&wg)
+
+	func(wg *sync.WaitGroup) {
+		defer wg.Done()
+		progressBarAuto.SetValue(0)
+		video.ExecDownload(download.VideosAuto, "A_", progressBarAuto)
+		progressBarSong.SetValue(100)
+	}(&wg)
+
+	wg.Wait()
 }
