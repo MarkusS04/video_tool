@@ -28,6 +28,5 @@ func GetLinkPath(name string, count int, prefix string) string {
 func Cleanup() {
 	folder := Config.FS.Destination
 	os.RemoveAll(folder)
-	fmt.Printf("removed %s\n\n", folder)
 	os.Mkdir(folder, os.ModePerm)
 }

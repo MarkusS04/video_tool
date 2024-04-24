@@ -1,6 +1,8 @@
 package ui
 
 import (
+	"video_tool/tools/helper"
+
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/dialog"
@@ -26,7 +28,9 @@ func mainMenu(window fyne.Window) {
 			window.Hide()
 			configEditView(window)
 		}),
-		widget.NewButton("Medien Ordner leeren", func() {}),
+		widget.NewButton("Medien Ordner leeren", func() {
+			helper.Cleanup()
+		}),
 	)
 
 	helpButton := widget.NewButtonWithIcon("Hilfe", theme.HelpIcon(), func() {
