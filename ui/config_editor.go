@@ -37,6 +37,22 @@ func configEditView(window fyne.Window) {
 				widget.NewLabel("Medienort automatisch leeren:"),
 				widget.NewCheckWithData("", binding.BindBool(&helper.Config.FS.Autoremove)),
 			),
+			widget.NewSeparator(),
+			container.New(
+				layout.NewGridLayoutWithColumns(2),
+				widget.NewLabel("VLC Pfad:"),
+				widget.NewEntryWithData(binding.BindString(&helper.Config.Music.Vlc)),
+			),
+			container.New(
+				layout.NewGridLayoutWithColumns(2),
+				widget.NewLabel("Quelle Musik:"),
+				widget.NewEntryWithData(binding.BindString(&helper.Config.Music.Source)),
+			),
+			container.New(
+				layout.NewGridLayoutWithColumns(2),
+				widget.NewLabel("Musik Player aktivieren:"),
+				widget.NewCheckWithData("", binding.BindBool(&helper.Config.Music.Enabled)),
+			),
 			widget.NewButton("Config speichern", func() {
 				helper.StoreConfig()
 			}),

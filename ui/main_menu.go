@@ -2,6 +2,7 @@ package ui
 
 import (
 	"video_tool/tools/helper"
+	"video_tool/tools/song"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
@@ -17,9 +18,13 @@ func MainMenu(app fyne.App) {
 }
 
 func mainMenu(window fyne.Window) {
+	playMusic := widget.NewButton("Musik abspielen", func() { song.PlayMusicInVlc(window) })
+	if !helper.Config.Music.Enabled {
+		playMusic.Disable()
+	}
 
 	layout := container.NewGridWithColumns(2,
-		widget.NewButton("Automatisch", func() {
+		widget.NewButton("Downloader", func() {
 			window.Hide()
 			automaticDownloadMenu(window)
 		}),
@@ -27,7 +32,7 @@ func mainMenu(window fyne.Window) {
 			window.Hide()
 			configEditView(window)
 		}),
-		widget.NewButton("Musik abspielen", func() {}),
+		playMusic,
 		widget.NewButton("Medien Ordner leeren", func() {
 			helper.Cleanup()
 			d := dialog.NewInformation("Info", "Medien Ordner erfolgreich gelehrt", window)
@@ -35,13 +40,13 @@ func mainMenu(window fyne.Window) {
 		}),
 	)
 
-	helpButton := widget.NewButtonWithIcon("Hilfe", theme.HelpIcon(), func() {
-		showInfoDialog(window)
-	})
-
-	window.SetContent(container.NewVBox(
-		layout,
-		helpButton,
+	window.SetContent(container.NewCenter(
+		container.NewVBox(
+			layout,
+			widget.NewButtonWithIcon("Hilfe", theme.HelpIcon(), func() {
+				showInfoDialog(window)
+			}),
+		),
 	))
 
 	window.Resize(fyne.NewSize(640, 400))

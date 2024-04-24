@@ -8,3 +8,9 @@ fs:
     source: $HOME/Desktop/Lieder
     destination: $HOME/Desktop/Heute
     autoremove: true
+
+music:
+    enablead: true
+    enabled: true
+    source: $HOME/Desktop/Musik
+    vlc: C:\Program Files\VideoLAN\VLC
