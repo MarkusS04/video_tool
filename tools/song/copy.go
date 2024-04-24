@@ -32,11 +32,13 @@ func Copy(songs []string, progressBar *widget.ProgressBar) {
 			progresMutex.Lock()
 			done++
 			progressBar.SetValue(float64(done) / float64(len(songs)))
+			progressBar.Refresh()
 			progresMutex.Unlock()
 		}(song, i)
 	}
 
 	wg.Wait()
+	progressBar.SetValue(1)
 }
 
 func copySong(song string, count int) {

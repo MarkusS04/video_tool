@@ -19,7 +19,6 @@ func MainMenu(app fyne.App) {
 func mainMenu(window fyne.Window) {
 
 	layout := container.NewGridWithColumns(2,
-		widget.NewButton("Manuell", func() {}),
 		widget.NewButton("Automatisch", func() {
 			window.Hide()
 			automaticDownloadMenu(window)
@@ -28,8 +27,11 @@ func mainMenu(window fyne.Window) {
 			window.Hide()
 			configEditView(window)
 		}),
+		widget.NewButton("Musik abspielen", func() {}),
 		widget.NewButton("Medien Ordner leeren", func() {
 			helper.Cleanup()
+			d := dialog.NewInformation("Info", "Medien Ordner erfolgreich gelehrt", window)
+			d.Show()
 		}),
 	)
 

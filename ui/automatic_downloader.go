@@ -33,7 +33,7 @@ func automaticDownloadMenu(window fyne.Window) {
 
 	var downloadBtn *widget.Button
 	downloadBtn = widget.NewButton("Start Download", func() {
-		execDownload(downloadBtn, downloadBox, &download)
+		execDownload(downloadBtn, downloadBox, download)
 		time.Sleep(2 * time.Second)
 		mainMenu(window)
 	})
@@ -55,7 +55,7 @@ func automaticDownloadMenu(window fyne.Window) {
 	window.Show()
 }
 
-func execDownload(btn *widget.Button, downloadBox *fyne.Container, download *downloadData) {
+func execDownload(btn *widget.Button, downloadBox *fyne.Container, download downloadData) {
 	btn.Disable()
 
 	var wg sync.WaitGroup
@@ -80,7 +80,6 @@ func execDownload(btn *widget.Button, downloadBox *fyne.Container, download *dow
 		}
 
 		song.Copy(songs, progressBarSong)
-		progressBarSong.SetValue(100)
 	}(&wg)
 
 	func(wg *sync.WaitGroup) {
@@ -92,14 +91,12 @@ func execDownload(btn *widget.Button, downloadBox *fyne.Container, download *dow
 
 		progressBarManuell.SetValue(0)
 		video.DownloadManuell(videosManuell, progressBarManuell)
-		progressBarManuell.SetValue(100)
 	}(&wg)
 
 	func(wg *sync.WaitGroup) {
 		defer wg.Done()
 		progressBarAuto.SetValue(0)
 		video.ExecDownload(download.VideosAuto, "A_", progressBarAuto)
-		progressBarSong.SetValue(100)
 	}(&wg)
 
 	wg.Wait()
