@@ -50,20 +50,21 @@ type File struct {
 }
 
 // GetMediaFiles return a list of all videos with their title and download URL
-func GetMediaFiles() (files []File, err error) {
+func GetMediaFiles() (files *[]File, err error) {
+	var fileList []File
 	data, err := loadVideos()
 	if err != nil {
 		return nil, err
 	}
 	for _, media := range data.Category.Media {
-		files = append(files,
+		fileList = append(fileList,
 			File{
 				ProgressiveDownloadURL: extractHighestResolution(media),
 				Label:                  media.Title,
 			})
 	}
 
-	return files, err
+	return &fileList, err
 }
 
 func loadVideos() (apiData ApiData, err error) {

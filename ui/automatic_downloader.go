@@ -17,7 +17,7 @@ import (
 type downloadData struct {
 	Songs         *[]*widget.Entry
 	VideosManuell *[]*widget.Entry
-	VideosAuto    []video.File
+	VideosAuto    *[]video.File
 }
 
 // automaticDownloadMenu erstellt die GUI für den Automatischen Download

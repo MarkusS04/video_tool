@@ -35,25 +35,34 @@ func automaticVideosList(videos *downloadData) fyne.CanvasObject {
 	}
 
 	layout := container.NewVBox()
-	for id := range videos.VideosAuto {
-		layout.Add(addTextField(id, videos.VideosAuto))
+	var refreshLayout func()
+	refreshLayout = func() {
+		layout.Objects = nil // Clear the current layout
+		for id := range *videos.VideosAuto {
+			layout.Add(addTextField(id, videos.VideosAuto, refreshLayout))
+		}
+		layout.Refresh() // Refresh the layout to reflect changes
 	}
 
+	refreshLayout()
 	return layout
 }
 
-func addTextField(fileID int, files []video.File) fyne.CanvasObject {
+func addTextField(fileID int, files *[]video.File, refreshLayout func()) fyne.CanvasObject {
 	column := container.NewHBox()
 
-	videoLabel := widget.NewLabel(files[fileID].Label)
+	videoLabel := widget.NewLabel((*files)[fileID].Label)
 	column.Add(videoLabel)
 
 	var removeButton *widget.Button
 	removeButton = widget.NewButton("Entfernen", func() {
-		files = append(files[fileID:], files[:fileID+1]...)
-		videoLabel.Hide()
-		removeButton.Hide()
+		removeFile(files, fileID)
+		refreshLayout()
 	})
 	column.Add(removeButton)
 	return column
+}
+
+func removeFile(files *[]video.File, index int) {
+	*files = append((*files)[:index], (*files)[index+1:]...)
 }

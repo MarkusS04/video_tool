@@ -14,20 +14,20 @@ import (
 )
 
 // ExecDownload downloads all files
-func ExecDownload(f []File, prefix string, progressBar *widget.ProgressBar) {
+func ExecDownload(f *[]File, prefix string, progressBar *widget.ProgressBar) {
 	var wg sync.WaitGroup
-	wg.Add(len(f))
+	wg.Add(len(*f))
 
 	var progresMutex sync.Mutex
 	done := 0
 
-	for i, file := range f {
+	for i, file := range *f {
 		go func(i int, file File, prefix string) {
 			defer wg.Done()
 			downloadFile(i, file, prefix)
 			progresMutex.Lock()
 			done++
-			progressBar.SetValue(float64(done) / float64(len(f)))
+			progressBar.SetValue(float64(done) / float64(len(*f)))
 			progresMutex.Unlock()
 		}(i, file, prefix)
 	}

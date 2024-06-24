@@ -49,7 +49,7 @@ extract:
 	}
 }
 
-func getMediaFiles(files []string) (f []File) {
+func getMediaFiles(files []string) *[]File {
 	errFunc := func(err error) {
 		messageBox := widgets.NewQMessageBox(nil)
 		messageBox.SetText(fmt.Sprintf(
@@ -62,7 +62,7 @@ func getMediaFiles(files []string) (f []File) {
 		messageBox.SetWindowTitle("Fehler")
 		messageBox.Exec()
 	}
-
+	var fileOut []File
 	for _, file := range files {
 		request, err := http.NewRequest(http.MethodGet, fmt.Sprintf(helper.Config.JW.ApiUrl, file), nil)
 		if err != nil {
@@ -90,12 +90,12 @@ func getMediaFiles(files []string) (f []File) {
 		}
 
 		for _, m := range categoryJSON.Media {
-			f = append(f, File{
+			fileOut = append(fileOut, File{
 				ProgressiveDownloadURL: extractHighestResolution(m),
 				Label:                  m.Title,
 			})
 		}
 	}
 
-	return f
+	return &fileOut
 }
