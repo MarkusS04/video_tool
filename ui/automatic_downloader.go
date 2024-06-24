@@ -10,6 +10,7 @@ import (
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/data/binding"
 	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/widget"
 )
@@ -23,6 +24,9 @@ type downloadData struct {
 // automaticDownloadMenu erstellt die GUI für den Automatischen Download
 func automaticDownloadMenu(window fyne.Window) {
 
+	var clearMedia *bool
+	clearMedia = &helper.Config.FS.Autoremove
+
 	download := downloadData{Songs: &[]*widget.Entry{}, VideosManuell: &[]*widget.Entry{}}
 
 	window.SetTitle("Medien Downloader - Automatischer Download")
@@ -33,7 +37,7 @@ func automaticDownloadMenu(window fyne.Window) {
 
 	var downloadBtn *widget.Button
 	downloadBtn = widget.NewButton("Start Download", func() {
-		execDownload(downloadBtn, downloadBox, download)
+		execDownload(downloadBtn, downloadBox, download, *clearMedia)
 		time.Sleep(2 * time.Second)
 		mainMenu(window)
 	})
@@ -42,6 +46,7 @@ func automaticDownloadMenu(window fyne.Window) {
 	vbox := container.New(
 		layout.NewVBoxLayout(),
 		backToMainMenu(window),
+		widget.NewCheckWithData("Medienordner leeren", binding.BindBool(clearMedia)),
 		container.NewAdaptiveGrid(2,
 			songsMenu(&download),
 			videoMenu(&download),
@@ -55,7 +60,7 @@ func automaticDownloadMenu(window fyne.Window) {
 	window.Show()
 }
 
-func execDownload(btn *widget.Button, downloadBox *fyne.Container, download downloadData) {
+func execDownload(btn *widget.Button, downloadBox *fyne.Container, download downloadData, clearMedia bool) {
 	btn.Disable()
 
 	var wg sync.WaitGroup
@@ -68,7 +73,7 @@ func execDownload(btn *widget.Button, downloadBox *fyne.Container, download down
 	downloadBox.Add(progressBarManuell)
 	downloadBox.Add(progressBarAuto)
 
-	if helper.Config.FS.Autoremove {
+	if helper.Config.FS.Autoremove && clearMedia {
 		helper.Cleanup()
 	}
 
