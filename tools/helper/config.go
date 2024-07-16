@@ -24,8 +24,10 @@ type config struct {
 	}
 }
 
+// Config stores global config struct
 var Config config
 
+// GetConfig loads configuration from disk
 func GetConfig() {
 	viper.SetConfigFile("config.yaml")
 	viper.AddConfigPath(".")
@@ -46,6 +48,7 @@ func GetConfig() {
 	Config = conf
 }
 
+// StoreConfig saves the changed configuration to disk
 func StoreConfig() {
 	viper.Set("fs.source", Config.FS.Source)
 	viper.Set("fs.destination", Config.FS.Destination)
@@ -53,7 +56,7 @@ func StoreConfig() {
 	viper.Set("music.vlc", Config.Music.Vlc)
 	viper.Set("music.source", Config.Music.Source)
 	viper.Set("music.enabled", Config.Music.Enabled)
-	if err := viper.WriteConfig(); err != nil {
+	if err := viper.WriteConfigAs("config.yaml"); err != nil {
 		panic(fmt.Errorf("fatal error config file: %s", err))
 	}
 }

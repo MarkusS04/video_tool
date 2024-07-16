@@ -1,3 +1,4 @@
+// Package ui stellt Funktionen bereit um eine Fyne Oberfläche für Video_Downloader anzuzeigen
 package ui
 
 import (
@@ -53,8 +54,12 @@ func addInputField(data *[]*widget.Entry, parent *fyne.Container, numbersOnly bo
 	parent.Add(con)
 }
 
-func backToMainMenu(window fyne.Window) *widget.Button {
+func backToMainMenu(window fyne.Window, callbackFuncs ...func()) *widget.Button {
 	return widget.NewButton("Back to Main Menu", func() {
+		for _, f := range callbackFuncs {
+			f()
+		}
+		window.Resize(fyne.NewSize(800, 640))
 		mainMenu(window)
 	})
 }

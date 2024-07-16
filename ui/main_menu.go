@@ -28,6 +28,10 @@ func mainMenu(window fyne.Window) {
 			window.Hide()
 			automaticDownloadMenu(window)
 		}),
+		widget.NewButton("Einrichtungshilfe", func() {
+			window.Hide()
+			taskWindow(window)
+		}),
 		widget.NewButton("Config bearbeiten", func() {
 			window.Hide()
 			configEditView(window)
@@ -38,14 +42,14 @@ func mainMenu(window fyne.Window) {
 			d := dialog.NewInformation("Info", "Medien Ordner erfolgreich gelehrt", window)
 			d.Show()
 		}),
+		widget.NewButtonWithIcon("Hilfe", theme.HelpIcon(), func() {
+			showInfoDialog(window)
+		}),
 	)
 
 	window.SetContent(container.NewCenter(
 		container.NewVBox(
 			layout,
-			widget.NewButtonWithIcon("Hilfe", theme.HelpIcon(), func() {
-				showInfoDialog(window)
-			}),
 		),
 	))
 
