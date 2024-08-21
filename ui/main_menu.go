@@ -27,6 +27,7 @@ func mainMenu(window fyne.Window) {
 		widget.NewButton("Downloader", func() {
 			window.Hide()
 			automaticDownloadMenu(window)
+			window.Show()
 		}),
 		widget.NewButton("Einrichtungshilfe", func() {
 			window.Hide()

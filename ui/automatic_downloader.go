@@ -24,8 +24,7 @@ type downloadData struct {
 // automaticDownloadMenu erstellt die GUI für den Automatischen Download
 func automaticDownloadMenu(window fyne.Window) {
 
-	var clearMedia *bool
-	clearMedia = &helper.Config.FS.Autoremove
+	clearMedia := &helper.Config.FS.Autoremove
 
 	download := downloadData{Songs: &[]*widget.Entry{}, VideosManuell: &[]*widget.Entry{}}
 
@@ -43,6 +42,8 @@ func automaticDownloadMenu(window fyne.Window) {
 	})
 	downloadBox.Add(downloadBtn)
 
+	automaticList := automaticVideosList(&download, window)
+
 	vbox := container.New(
 		layout.NewVBoxLayout(),
 		backToMainMenu(window),
@@ -52,12 +53,12 @@ func automaticDownloadMenu(window fyne.Window) {
 			videoMenu(&download),
 		),
 		layout.NewSpacer(),
-		automaticVideosList(&download),
-		downloadBox,
 	)
-
+	if automaticList != nil {
+		vbox.Add(automaticList)
+	}
+	vbox.Add(downloadBox)
 	window.SetContent(vbox)
-	window.Show()
 }
 
 func execDownload(btn *widget.Button, downloadBox *fyne.Container, download downloadData, clearMedia bool) {
@@ -100,8 +101,11 @@ func execDownload(btn *widget.Button, downloadBox *fyne.Container, download down
 
 	func(wg *sync.WaitGroup) {
 		defer wg.Done()
-		progressBarAuto.SetValue(0)
-		video.ExecDownload(download.VideosAuto, "A_", progressBarAuto)
+		if download.VideosAuto != nil {
+			progressBarAuto.SetValue(0)
+			video.ExecDownload(download.VideosAuto, "A_", progressBarAuto)
+		}
+		progressBarAuto.SetValue(progressBarAuto.Max)
 	}(&wg)
 
 	wg.Wait()

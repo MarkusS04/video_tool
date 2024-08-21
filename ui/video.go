@@ -1,6 +1,7 @@
 package ui
 
 import (
+	"errors"
 	"video_tool/tools/video"
 
 	"fyne.io/fyne/v2"
@@ -21,16 +22,16 @@ func videoMenu(data *downloadData) fyne.CanvasObject {
 	return layout
 }
 
-func automaticVideosList(videos *downloadData) fyne.CanvasObject {
+func automaticVideosList(videos *downloadData, window fyne.Window) fyne.CanvasObject {
 	var err error
 	videos.VideosAuto, err = video.GetMediaFiles()
 	if err != nil {
-		infoText := "Es ist ein Fehler aufgetreten während der Ermittlung der Videos zum automatisierten Download. Entweder nocheinmal probieren oder den manuellen Download benutzen.\n" +
-			err.Error()
+		err = errors.New(
+			"Es ist ein Fehler aufgetreten während der Ermittlung der Videos zum automatisierten Download.\n" +
+				"Entweder nocheinmal probieren oder den manuellen Download benutzen.\n" +
+				err.Error())
 
-		label := widget.NewLabel(infoText)
-		label.Wrapping = fyne.TextWrapWord
-		dialog.ShowCustom("Fehler", "OK", label, nil)
+		dialog.ShowError(err, window)
 		return nil
 	}
 
